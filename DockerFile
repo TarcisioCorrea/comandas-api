@@ -2,7 +2,7 @@
 FROM python:3.13-slim
 
 # Define metadados da imagem (boas práticas para Podman/Docker)
-LABEL maintainer="Luciano Coelho <luciano.coelho@gmail.com>"
+LABEL maintainer="Tarcisio Correa <tarcisiosicorreaho@gmail.com>"
 LABEL description="API Python com FastAPI, Hypercorn e QUIC"
 LABEL version="1.0.0"
 
@@ -15,7 +15,8 @@ COPY ./requirements.txt .
 
 # Atualiza o pip e Instala as dependências do Python listadas em requirements.txt
 RUN pip install --no-cache-dir --upgrade pip
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
+#RUN pip install --no-cache-dir --upgrade -r requirements.txt
+
 #RUN pip install hypercorn[h3]
 #RUN pip install aioquic
 
