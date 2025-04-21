@@ -1,0 +1,50 @@
+@token = ebbf505d9d2b2cf44427858c2951abf035475b9d040271925f0b31bbd295c326
+
+### Verbo GET – listar todos
+GET http://localhost:8000/cliente/ HTTP/1.1
+Authorization: Bearer {{token}}
+
+### Verbo GET – listar todos
+curl -X 'GET' 'http://localhost:8000/cliente/' \
+    -H 'accept: application/json' \
+    -H 'Authorization: Bearer {{token}}'
+
+### ao logar, gera um token que deve ser usado para acessar as rotas da API
+curl -X 'POST' 'http://127.0.0.1:8000/token' \
+    -H 'accept: application/json' \
+    -H 'Content-Type: application/x-www-form-urlencoded' \
+    -d 'username=abc&password=bolinhas'
+
+### token gerado
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYmMiLCJleHAiOjE3NDUyODQzNDJ9.EIy4cbsG-eZV92Mz8uJ3fHqiDSk3ohnuYJR655gIb9o
+
+### teste token
+curl -X 'GET' 'http://127.0.0.1:8000/token/logado/' \
+    -H 'accept: application/json' \
+    -H 'Authorization: Bearer {{token}}'
+
+### Verbo GET – listar um
+GET http://localhost:8000/cliente/10 HTTP/1.1
+
+### Verbo POST – adicionar
+POST http://127.0.0.1:8000/cliente/ HTTP/1.1
+content-type: application/json
+
+{
+    "nome": "Tarcisio Simão Correa",    
+    "cpf": "1",
+    "telefone": "tel123456"    
+}
+
+### Verbo PUT – atualiza
+PUT http://127.0.0.1:8000/cliente/2 HTTP/1.1
+content-type: application/json
+
+{
+    "nome": "Tarcisio Simão Correa",    
+    "cpf": "1",
+    "telefone": "tel1234567"    
+}
+
+### Verbo DELETE - excluir
+DELETE http://127.0.0.1:8000/cliente/3 HTTP/1.1

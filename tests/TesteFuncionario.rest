@@ -1,0 +1,56 @@
+@token = ebbf505d9d2b2cf44427858c2951abf035475b9d040271925f0b31bbd295c326
+
+### Verbo GET – listar todos
+GET http://localhost:8000/funcionario/ HTTP/1.1
+Authorization: Bearer {{token}}
+
+### Verbo GET – listar todos
+curl -X 'GET' 'http://localhost:8000/funcionario/' \
+    -H 'accept: application/json' \
+    -H 'Authorization: Bearer {{token}}'
+
+### ao logar, gera um token que deve ser usado para acessar as rotas da API
+curl -X 'POST' 'http://127.0.0.1:8000/token' \
+    -H 'accept: application/json' \
+    -H 'Content-Type: application/x-www-form-urlencoded' \
+    -d 'username=abc&password=bolinhas'
+
+### token gerado
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYmMiLCJleHAiOjE3NDUyODQwNTR9.lRELrn6QDLIzGGYZcXLEeBz_8xEtzHHyYKunU_10iYM
+
+### teste token
+curl -X 'GET' 'http://127.0.0.1:8000/token/logado/' \
+    -H 'accept: application/json' \
+    -H 'Authorization: Bearer {{token}}'
+
+### Verbo GET – listar um
+GET http://localhost:8000/funcionario/10 HTTP/1.1
+
+### Verbo POST – adicionar
+POST http://127.0.0.1:8000/funcionario/ HTTP/1.1
+content-type: application/json
+
+{
+    "nome": "Tarcisio Simão Correa",
+    "matricula": "123456",
+    "cpf": "1",
+    "telefone": "tel123456",
+    "grupo": 1,
+    "senha": "senha123"
+}
+
+### Verbo PUT – atualiza
+PUT http://127.0.0.1:8000/funcionario/2 HTTP/1.1
+content-type: application/json
+
+{
+    "nome": "Tarcisio Simão Correa",
+    "matricula": "123456",
+    "cpf": "1",
+    "telefone": "tel1234567",
+    "grupo": 1,
+    "senha": "senha1235"
+}
+
+### Verbo DELETE - excluir
+DELETE http://127.0.0.1:8000/funcionario/3 HTTP/1.1
