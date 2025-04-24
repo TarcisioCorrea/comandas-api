@@ -48,8 +48,8 @@ if __name__ == "__main__":
     ssl_context.load_cert_chain(certfile="cert\cert.pem", keyfile="cert\ecc-key.pem")
 
     config = Config()
-    config.bind = ["0.0.0.0:4443"]
-    config.quic_bind = ["0.0.0.0:4443"]
+    config.bind = ["localhost:4443"]
+    config.quic_bind = ["localhost:4443"]
     #config.insecure_bind = ["0.0.0.0:8000"]
     config.certfile = "cert\cert.pem"
     config.keyfile = "cert\ecc-key.pem"

@@ -2,7 +2,7 @@
 FROM python:3.13-slim
 
 # Define metadados da imagem (boas práticas para Podman/Docker)
-LABEL maintainer="Tarcisio Correa <tarcisiosicorreaho@gmail.com>"
+LABEL maintainer="Tarcisio Correa <tarcisiosicorrea@gmail.com>"
 LABEL description="API Python com FastAPI, Hypercorn e QUIC"
 LABEL version="1.0.0"
 
@@ -15,7 +15,7 @@ COPY ./requirements.txt .
 
 # Atualiza o pip e Instala as dependências do Python listadas em requirements.txt
 RUN pip install --no-cache-dir --upgrade pip
-#RUN pip install --no-cache-dir --upgrade -r requirements.txt
+RUN pip install --no-cache-dir --upgrade -r requirements.txt --use-deprecated=legacy-resolver
 
 #RUN pip install hypercorn[h3]
 #RUN pip install aioquic
@@ -36,6 +36,6 @@ EXPOSE 4443/udp
 # REMOVIDO: --reload (não usar em produção)
 # CAMINHOS: Usando caminhos absolutos para clareza
 CMD ["hypercorn", \
-    "--certfile=/cert/cert.pem", "--keyfile=/cert/ecc-key.pem", \
-    "--bind", "0.0.0.0:4443", "--quic-bind", "0.0.0.0:4443", \
-    "main:app"]
+"--certfile=/cert/cert.pem", "--keyfile=/cert/ecc-key.pem", \
+"--bind", "0.0.0.0:4443", "--quic-bind", "0.0.0.0:4443", \
+"main:app"]
