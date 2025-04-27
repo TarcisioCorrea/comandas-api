@@ -13,7 +13,6 @@ from typing import Annotated
 from fastapi import Depends
 from security import get_current_active_user, User
 
-#router = APIRouter()
 # dependências de forma global
 router = APIRouter(dependencies=[Depends(get_current_active_user)])
 
@@ -25,12 +24,12 @@ async def get_comanda(id_comanda: int):
 
         # busca filtrando pelo status
         aux_dados = session.query(ComandaDB, FuncionarioDB, ClienteDB)\
-        .select_from(ComandaDB)\
-        .join(FuncionarioDB, FuncionarioDB.id_funcionario == ComandaDB.funcionario_id, isouter=False)\
-        .join(ClienteDB, ClienteDB.id_cliente == ComandaDB.cliente_id, isouter=True)\
-        .filter(ComandaDB.id_comanda == id_comanda)\
-        .order_by(ComandaDB.id_comanda)\
-        .all()
+            .select_from(ComandaDB)\
+            .join(FuncionarioDB, FuncionarioDB.id_funcionario == ComandaDB.funcionario_id, isouter=False)\
+            .join(ClienteDB, ClienteDB.id_cliente == ComandaDB.cliente_id, isouter=True)\
+            .filter(ComandaDB.id_comanda == id_comanda)\
+            .order_by(ComandaDB.id_comanda)\
+            .all()
 
         # monta o json com o retorno das três tabelas
         dados = []
@@ -38,7 +37,6 @@ async def get_comanda(id_comanda: int):
             dados.append({'comanda': row[0], 'funcionario': row[1], 'cliente': row[2]})
 
         return dados, 200
-    
     except Exception as e:
         return {"erro": str(e)}, 400
     finally:
@@ -52,12 +50,12 @@ async def get_comanda(status: int):
 
         # busca filtrando pelo status
         aux_dados = session.query(ComandaDB, FuncionarioDB, ClienteDB)\
-        .select_from(ComandaDB)\
-        .join(FuncionarioDB, FuncionarioDB.id_funcionario == ComandaDB.funcionario_id, isouter=False)\
-        .join(ClienteDB, ClienteDB.id_cliente == ComandaDB.cliente_id, isouter=True)\
-        .filter(ComandaDB.status == status)\
-        .order_by(ComandaDB.id_comanda)\
-        .all()
+            .select_from(ComandaDB)\
+            .join(FuncionarioDB, FuncionarioDB.id_funcionario == ComandaDB.funcionario_id, isouter=False)\
+            .join(ClienteDB, ClienteDB.id_cliente == ComandaDB.cliente_id, isouter=True)\
+            .filter(ComandaDB.status == status)\
+            .order_by(ComandaDB.id_comanda)\
+            .all()
 
         # monta o json com o retorno das três tabelas
         dados = []
@@ -65,19 +63,21 @@ async def get_comanda(status: int):
             dados.append({'comanda': row[0], 'funcionario': row[1], 'cliente': row[2]})
 
         return dados, 200
-    
     except Exception as e:
         return {"erro": str(e)}, 400
     finally:
         session.close()
+
 
 # Abre Nova Comanda
 @router.post("/comanda", tags=["Comanda"])
 async def post_comanda(corpo: Comanda):
     try:
         session = db.Session()
+       
         # antes de abrir a comanda validar se ela já não esta aberta, status == 0
         dados = session.query(ComandaDB).filter(ComandaDB.comanda == corpo.comanda).filter(ComandaDB.status == 0).all()
+        
         if len(dados) > 0:
             # comanda já aberta, retorna o json com seus dados
             return dados, 300
@@ -87,24 +87,24 @@ async def post_comanda(corpo: Comanda):
             session.add(dados)
             # session.flush()
             session.commit()
-
-            return {"id": dados.id_comanda}, 200
         
+            return {"id": dados.id_comanda}, 200
     except Exception as e:
         session.rollback()
         return {"erro": str(e)}, 400
     finally:
         session.close()
 
+
 # Edita Comanda
 @router.put("/comanda", tags=["Comanda"])
 async def put_comanda(corpo: Comanda):
     try:
         session = db.Session()
-
+        
         # busca os dados atuais da comanda
         dados = session.query(ComandaDB).filter(ComandaDB.id_comanda == corpo.id_comanda).one()
-
+        
         # atualiza os dados
         #dados.id_comanda == corpo.id_comanda
         dados.comanda = corpo.comanda
@@ -114,33 +114,36 @@ async def put_comanda(corpo: Comanda):
         dados.cliente_id = corpo.cliente_id
         session.add(dados)
         session.commit()
-
+        
         return {"id": dados.id_comanda}, 200
-    
     except Exception as e:
         session.rollback()
+        
         return {"erro": str(e)}, 400
     finally:
         session.close()
+
 
 # Adiciona item na Comanda
 @router.post("/comanda/item", tags=["Comanda"])
 async def post_comanda_item(corpo: ComandaProdutos):
     try:
         session = db.Session()
+
         # insere um novo item na comanda
         dados = ComandaProdutoDB(None, corpo.comanda_id, corpo.produto_id, corpo.funcionario_id, corpo.quantidade, corpo.valor_unitario)
+        
         session.add(dados)
         # session.flush()
         session.commit()
-
+        
         return {"id": dados.id_comanda_produto}, 200
-    
     except Exception as e:
         session.rollback()
         return {"erro": str(e)}, 400
     finally:
         session.close()
+
 
 # Lista todos os itens da comanda informada
 @router.get("/comanda/{comanda_id}/item", tags=["Comanda"])
@@ -160,29 +163,27 @@ async def get_comanda_item(comanda_id: int):
         # monta o json com o retorno das três tabelas
         dados = []
         for row in aux_dados:
-            dados.append(
-                {'comanda_produto': row[0], 'funcionario': row[1], 'produto': row[2]})
-            
+            dados.append({'comanda_produto': row[0], 'funcionario': row[1], 'produto': row[2]})
+        
         return dados, 200
-    
     except Exception as e:
         return {"erro": str(e)}, 400
     finally:
         session.close()
+
 
 # Edita item na Comanda - se zero exclui
 @router.put("/comanda/item", tags=["Comanda"])
 async def put_comanda_item(corpo: ComandaProdutos):
     try:
         session = db.Session()
-
+        
         # busca os dados atuais do item selecionado da comanda
         dados = session.query(ComandaProdutoDB).filter(ComandaProdutoDB.id_comanda_produto == corpo.id_comanda_produto).one()
-
+        
         # se nova quantidade zerada, exclui
         if (corpo.quantidade == 0):
-            session.delete(dados)
-
+            session.delete(dados)        
         # edita
         else:
             # dados.comanda_id = corpo.comanda_id
@@ -191,15 +192,16 @@ async def put_comanda_item(corpo: ComandaProdutos):
             dados.quantidade = corpo.quantidade
             dados.valor_unitario = corpo.valor_unitario
             session.add(dados)
+            session.commit()
 
-        session.commit()
-        return {"id": dados.id_comanda_produto}, 200
-    
+            return {"id": dados.id_comanda_produto}, 200
     except Exception as e:
         session.rollback()
+    
         return {"erro": str(e)}, 400
     finally:
         session.close()
+
 
 # Retorna o total da comanda
 @router.get("/comandas/{comanda_id}", tags=["Comanda"])
@@ -208,10 +210,10 @@ async def get_comanda_total(comanda_id: int):
         session = db.Session()
         
         from sqlalchemy.sql import func
-        dados = session.query(func.sum(ComandaProdutoDB.quantidade * ComandaProdutoDB.valor_unitario).label("Total:")).filter(ComandaProdutoDB.comanda_id == comanda_id).scalar()
-
+        dados = session.query(func.sum(ComandaProdutoDB.quantidade * ComandaProdutoDB.valor_unitario).label(
+            "Total:")).filter(ComandaProdutoDB.comanda_id == comanda_id).scalar()
+        
         return {"total_comanda": dados}, 200
-    
     except Exception as e:
         return {"erro": str(e)}, 400
     finally:
